@@ -11,12 +11,12 @@ import (
 func main() {
 	m, err := model.New(4, 4)
 	if err != nil {
-		fmt.Printf("Ah, drat — %v", err)
+		fmt.Printf("Ah, drat — %v\n", err)
 		os.Exit(1)
 	}
 	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {
-		fmt.Printf("Ah drat. %v", err)
+		fmt.Printf("Ah drat — %v\n", err)
 		os.Exit(1)
 	}
 }
