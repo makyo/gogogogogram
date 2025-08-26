@@ -1,7 +1,7 @@
 package model
 
 func (m Model) CursorCellUp() Model {
-	if m.cursor-m.size > 0 {
+	if m.cursor-m.size >= 0 {
 		m.cursor -= m.size
 	}
 	return m
@@ -15,21 +15,21 @@ func (m Model) CursorCellDown() Model {
 }
 
 func (m Model) CursorCellRight() Model {
-	if m.cursor%m.size < m.size {
+	if m.cursor%m.size < m.size-1 {
 		m.cursor++
 	}
 	return m
 }
 
 func (m Model) CursorCellLeft() Model {
-	if m.cursor%m.size != 1 {
+	if m.cursor%m.size != 0 {
 		m.cursor--
 	}
 	return m
 }
 
 func (m Model) CursorSectionUp() Model {
-	if m.cursor > m.size*m.perSection {
+	if m.cursor >= m.size*m.perSection {
 		m.cursor -= m.size * m.perSection
 	}
 	return m
@@ -50,7 +50,7 @@ func (m Model) CursorSectionRight() Model {
 }
 
 func (m Model) CursorSectionLeft() Model {
-	if m.cursor%m.perSection > 0 {
+	if m.cursor%m.perSection >= 0 {
 		m.cursor -= m.section
 	}
 	return m
