@@ -1,57 +1,49 @@
 package model
 
-func (m Model) CursorCellUp() Model {
-	if m.cursor-m.size >= 0 {
-		m.cursor -= m.size
+func (m model) cursorCellUp() {
+	if m.cursor.y >= 1 {
+		m.cursor.y--
 	}
-	return m
 }
 
-func (m Model) CursorCellDown() Model {
-	if m.cursor+m.size < m.size*m.size {
-		m.cursor += m.size
+func (m model) cursorCellDown() {
+	if m.cursor.y < m.fieldSize-1 {
+		m.cursor.y++
 	}
-	return m
 }
 
-func (m Model) CursorCellRight() Model {
-	if m.cursor%m.size < m.size-1 {
-		m.cursor++
+func (m model) cursorCellRight() {
+	if m.cursor.x < m.fieldSize-1 {
+		m.cursor.x++
 	}
-	return m
 }
 
-func (m Model) CursorCellLeft() Model {
-	if m.cursor%m.size != 0 {
-		m.cursor--
+func (m model) cursorCellLeft() {
+	if m.cursor.x >= 1 {
+		m.cursor.x--
 	}
-	return m
 }
 
-func (m Model) CursorSectionUp() Model {
-	if m.cursor >= m.size*m.perSection {
-		m.cursor -= m.size * m.perSection
+func (m model) cursorSectionUp() {
+	if m.cursor.y >= m.cellsPerSection {
+		m.cursor.y -= m.cellsPerSection
 	}
-	return m
 }
 
-func (m Model) CursorSectionDown() Model {
-	if m.cursor < m.size*m.perSection*(m.section-1) {
-		m.cursor += m.size * m.perSection
+func (m model) cursorSectionDown() {
+	if m.cursor.y < m.fieldSize-m.cellsPerSection {
+		m.cursor.y += m.cellsPerSection
 	}
-	return m
 }
 
-func (m Model) CursorSectionRight() Model {
-	if m.cursor%m.perSection < m.section-1 {
-		m.cursor += m.section
+func (m model) cursorSectionRight() {
+	if m.cursor.x < m.fieldSize-m.cellsPerSection {
+		m.cursor.x += m.cellsPerSection
 	}
-	return m
 }
 
-func (m Model) CursorSectionLeft() Model {
-	if m.cursor%m.perSection >= 0 {
-		m.cursor -= m.section
+func (m model) cursorSectionLeft() {
+	if m.cursor.x >= m.cellsPerSection {
+		m.cursor.x -= m.cellsPerSection
 	}
-	return m
 }

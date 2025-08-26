@@ -2,11 +2,11 @@ package model
 
 import tea "github.com/charmbracelet/bubbletea"
 
-func (m Model) Init() tea.Cmd {
+func (m model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	case tea.KeyMsg:
@@ -19,45 +19,45 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Movement by cell
 		case "up", "w":
-			m = m.CursorCellUp()
+			m.cursorCellUp()
 
 		case "down", "s":
-			m = m.CursorCellDown()
+			m.cursorCellDown()
 
 		case "right", "d":
-			m = m.CursorCellRight()
+			m.cursorCellRight()
 
 		case "left", "a":
-			m = m.CursorCellLeft()
+			m.cursorCellLeft()
 
 		// Movement by section
 		case "ctrl+up", "ctrl+w", "shift+up", "shift+w":
-			m = m.CursorSectionUp()
+			m.cursorSectionUp()
 
 		case "ctrl+down", "ctrl+s", "shift+down", "shift+s":
-			m = m.CursorSectionDown()
+			m.cursorSectionDown()
 
 		case "ctrl+right", "ctrl+d", "shift+right", "shift+d":
-			m = m.CursorSectionRight()
+			m.cursorSectionRight()
 
 		case "ctrl+left", "ctrl+a", "shift+left", "shift+a":
-			m = m.CursorSectionRight()
+			m.cursorSectionRight()
 
 		// Marking/flagging
 		case " ", "enter":
-			m = m.Mark()
+			m.state.mark(*m.cursor)
 
 		case "x":
-			m = m.Flag()
+			m.state.flag(*m.cursor)
 
 		case "delete", "backspace":
-			m = m.ClearGuess()
+			m.state.clear(*m.cursor)
 		}
 	}
 
 	return m, nil
 }
 
-func (m Model) View() string {
+func (m model) View() string {
 	return ""
 }

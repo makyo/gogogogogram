@@ -8,107 +8,99 @@ import (
 
 func TestCursor(t *testing.T) {
 	Convey("Given a cursor", t, func() {
+		m := New(4, 4)
+		So(*m.cursor, ShouldResemble, point{0, 0})
 
 		Convey("When moving cell to cell", func() {
-			m, err := New(4, 4)
-			So(err, ShouldBeNil)
-			So(m.cursor, ShouldEqual, 0)
 
 			Convey("You can move down", func() {
-				m = m.CursorCellDown()
-				So(m.cursor, ShouldEqual, 16)
+				m.cursorCellDown()
+				So(*m.cursor, ShouldResemble, point{0, 1})
 			})
 
 			Convey("You can move up", func() {
-				m = m.CursorCellDown()
-				m = m.CursorCellUp()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorCellDown()
+				m.cursorCellUp()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
 			Convey("You can move right", func() {
-				m = m.CursorCellRight()
-				So(m.cursor, ShouldEqual, 1)
+				m.cursorCellRight()
+				So(*m.cursor, ShouldResemble, point{1, 0})
 			})
 
 			Convey("You can move left", func() {
-				m = m.CursorCellRight()
-				m = m.CursorCellLeft()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorCellRight()
+				m.cursorCellLeft()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
 			Convey("You can't move up beyond the top", func() {
-				m = m.CursorCellUp()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorCellUp()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
 			Convey("You can't move left beyond the edge", func() {
-				m = m.CursorCellLeft()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorCellLeft()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
-			bottomRight := (m.size * m.size) - 1
-			m.cursor = bottomRight
-
 			Convey("You can't move down below the bottom", func() {
-				m.cursor = bottomRight
-				m = m.CursorCellDown()
-				So(m.cursor, ShouldEqual, bottomRight)
+				m.cursor = &point{15, 15}
+				m.cursorCellDown()
+				So(*m.cursor, ShouldResemble, point{15, 15})
 			})
 
 			Convey("You can't move right beyond the edge", func() {
-				m.cursor = bottomRight
-				m = m.CursorCellRight()
-				So(m.cursor, ShouldEqual, bottomRight)
+				m.cursor = &point{15, 15}
+				m.cursorCellRight()
+				So(*m.cursor, ShouldResemble, point{15, 15})
 			})
 		})
 
 		Convey("When moving section to section", func() {
-			m, err := New(4, 4)
-			So(err, ShouldBeNil)
 			Convey("You can move down", func() {
-				m = m.CursorSectionDown()
-				So(m.cursor, ShouldEqual, 64)
+				m.cursorSectionDown()
+				So(*m.cursor, ShouldResemble, point{0, 4})
 			})
 
 			Convey("You can move up", func() {
-				m = m.CursorSectionDown()
-				m = m.CursorSectionUp()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorSectionDown()
+				m.cursorSectionUp()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
 			Convey("You can move right", func() {
-				m = m.CursorSectionRight()
-				So(m.cursor, ShouldEqual, 4)
+				m.cursorSectionRight()
+				So(*m.cursor, ShouldResemble, point{4, 0})
 			})
 
 			Convey("You can move left", func() {
-				m = m.CursorSectionRight()
-				m = m.CursorSectionLeft()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorSectionRight()
+				m.cursorSectionLeft()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
 			Convey("You can't move up beyond the top", func() {
-				m = m.CursorCellUp()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorCellUp()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
 			Convey("You can't move left beyond the edge", func() {
-				m = m.CursorCellLeft()
-				So(m.cursor, ShouldEqual, 0)
+				m.cursorCellLeft()
+				So(*m.cursor, ShouldResemble, point{0, 0})
 			})
 
-			bottomRight := (m.size * m.size) - 1
-
 			Convey("You can't move down below the bottom", func() {
-				m.cursor = bottomRight
-				m = m.CursorSectionDown()
-				So(m.cursor, ShouldEqual, bottomRight)
+				m.cursor = &point{15, 15}
+				m.cursorSectionDown()
+				So(*m.cursor, ShouldResemble, point{15, 15})
 			})
 
 			Convey("You can't move right beyond the edge", func() {
-				m.cursor = bottomRight
-				m = m.CursorSectionRight()
-				So(m.cursor, ShouldEqual, bottomRight)
+				m.cursor = &point{15, 15}
+				m.cursorSectionRight()
+				So(*m.cursor, ShouldResemble, point{15, 15})
 			})
 		})
 	})

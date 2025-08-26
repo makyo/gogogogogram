@@ -1,29 +1,32 @@
 package model
 
-type Model struct {
-	size, section, perSection    int
-	field, view                  int
-	marks, flags                 int
-	correct, sections, completed int
+type point struct {
+	x, y int
+}
+
+type model struct {
+	fieldSize, sectionSize, cellsPerSection int
+
+	state *state
+
 	clears, score, factor, track int
-	cursor                       int
+
+	cursor *point
 
 	columnStates, rowStates     [][]int
 	columnsCorrect, rowsCorrect []bool
 
-	history []string
+	history string
 }
 
-func New(section, perSection int) (Model, error) {
-	m := Model{
-		size:       section * perSection,
-		section:    section,
-		perSection: perSection,
+func New(sectionSize, cellsPerSection int) model {
+	m := model{
+		fieldSize:       sectionSize * cellsPerSection,
+		sectionSize:     sectionSize,
+		cellsPerSection: cellsPerSection,
+		cursor:          &point{0, 0},
 	}
+	m.state = newState(sectionSize, cellsPerSection)
 
-	for i := 0; i < section*section; i++ {
-		m = m.randomizeSection(i)
-	}
-
-	return m, nil
+	return m
 }

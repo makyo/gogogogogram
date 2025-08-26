@@ -9,12 +9,7 @@ import (
 )
 
 func main() {
-	m, err := model.New(4, 4)
-	if err != nil {
-		fmt.Printf("Ah, drat — %v\n", err)
-		os.Exit(1)
-	}
-	p := tea.NewProgram(m)
+	p := tea.NewProgram(model.New(4, 4))
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Ah drat — %v\n", err)
 		os.Exit(1)
