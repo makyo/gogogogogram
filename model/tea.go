@@ -19,39 +19,39 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Movement by cell
 		case "up", "w":
-			m.cursorCellUp()
+			m.state.CursorCellUp()
 
 		case "down", "s":
-			m.cursorCellDown()
+			m.state.CursorCellDown()
 
 		case "right", "d":
-			m.cursorCellRight()
+			m.state.CursorCellRight()
 
 		case "left", "a":
-			m.cursorCellLeft()
+			m.state.CursorCellLeft()
 
 		// Movement by section
 		case "ctrl+up", "ctrl+w", "shift+up", "shift+w":
-			m.cursorSectionUp()
+			m.state.CursorSectionUp()
 
 		case "ctrl+down", "ctrl+s", "shift+down", "shift+s":
-			m.cursorSectionDown()
+			m.state.CursorSectionDown()
 
 		case "ctrl+right", "ctrl+d", "shift+right", "shift+d":
-			m.cursorSectionRight()
+			m.state.CursorSectionRight()
 
 		case "ctrl+left", "ctrl+a", "shift+left", "shift+a":
-			m.cursorSectionRight()
+			m.state.CursorSectionRight()
 
 		// Marking/flagging
 		case " ", "enter":
-			m.state.mark(*m.cursor)
+			m.state.Mark()
 
 		case "x":
-			m.state.flag(*m.cursor)
+			m.state.Flag()
 
 		case "delete", "backspace":
-			m.state.clear(*m.cursor)
+			m.state.Clear()
 		}
 	}
 

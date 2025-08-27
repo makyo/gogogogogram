@@ -1,17 +1,15 @@
 package model
 
-type point struct {
-	x, y int
-}
+import "git.makyo.dev/makyo/gogogogogram/state"
 
 type model struct {
 	fieldSize, sectionSize, cellsPerSection int
 
-	state *state
+	state *state.State
 
 	clears, score, factor, track int
 
-	cursor *point
+	cursor *state.Point
 
 	columnStates, rowStates     [][]int
 	columnsCorrect, rowsCorrect []bool
@@ -24,9 +22,9 @@ func New(sectionSize, cellsPerSection int) model {
 		fieldSize:       sectionSize * cellsPerSection,
 		sectionSize:     sectionSize,
 		cellsPerSection: cellsPerSection,
-		cursor:          &point{0, 0},
+		cursor:          &state.Point{0, 0},
 	}
-	m.state = newState(sectionSize, cellsPerSection)
+	m.state = state.New(sectionSize, cellsPerSection)
 
 	return m
 }
