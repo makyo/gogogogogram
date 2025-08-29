@@ -89,7 +89,7 @@ func TestCell(t *testing.T) {
 				So(c.flagged(), ShouldBeFalse)
 				So(c.correct(), ShouldBeTrue)
 				So(c.complete(), ShouldBeTrue)
-				c = c.clear()
+				c = c.clear(false)
 				So(c.state(), ShouldBeTrue)
 				So(c.marked(), ShouldBeFalse)
 				So(c.flagged(), ShouldBeFalse)

@@ -94,6 +94,6 @@ func (f *field) flag(p Point) {
 }
 
 // clear clears all but the cell's state.
-func (f *field) clear(p Point) {
-	f.cells[f.i(p)] = f.cells[f.i(p)].clear()
+func (f *field) clear(p Point, deadCorrect bool) {
+	f.cells[f.i(p)] = f.cells[f.i(p)].clear(deadCorrect)
 }

@@ -42,7 +42,7 @@ func (s *State) String() string {
 	for x := 0; x < s.sectionSize*s.cellsPerSection; x++ {
 		for y := 0; y < s.sectionSize*s.cellsPerSection; y++ {
 			p := Point{x, y}
-			if s.cells.correct(p) {
+			if s.cells.correct(p) && (s.cells.marked(p) || s.cells.flagged(p)) {
 				if s.cells.state(p) {
 					buf.WriteString("O")
 				} else {
@@ -54,7 +54,11 @@ func (s *State) String() string {
 				} else if s.cells.flagged(p) {
 					buf.WriteString("x")
 				} else {
-					buf.WriteString(" ")
+					if s.cells.state(p) {
+						buf.WriteString(".")
+					} else {
+						buf.WriteString(" ")
+					}
 				}
 			}
 		}
@@ -72,19 +76,19 @@ func (s *State) Flag() []bool {
 }
 
 func (s *State) Clear() {
-	s.clear(*s.cursor)
+	s.clear(*s.cursor, true)
 }
 
 func (s *State) view(cursor []int) {
 }
 
 func (s *State) initSection(p Point) {
-	s.sections.clear(p)
+	s.sections.clear(p, false)
 	startX := p.X * s.cellsPerSection
 	startY := p.Y * s.cellsPerSection
 	for x := 0; x < s.cellsPerSection; x++ {
 		for y := 0; y < s.cellsPerSection; y++ {
-			s.cells.clear(Point{x + startX, y + startY})
+			s.cells.clear(Point{x + startX, y + startY}, true)
 			if rand.Int()%2 == 0 {
 				s.cells.kill(Point{x + startX, y + startY})
 			} else {
@@ -92,6 +96,7 @@ func (s *State) initSection(p Point) {
 			}
 		}
 	}
+	s.update(p)
 }
 
 func (s *State) mark(p Point) []bool {
@@ -104,8 +109,8 @@ func (s *State) flag(p Point) []bool {
 	return s.update(p)
 }
 
-func (s *State) clear(p Point) {
-	s.cells.clear(p)
+func (s *State) clear(p Point, deadCorrect bool) {
+	s.cells.clear(p, deadCorrect)
 	s.update(p)
 }
 
@@ -113,7 +118,7 @@ func (s *State) sectionCorrect(p Point) bool {
 	sectionCorrect := true
 	for x := 0; x < s.cellsPerSection; x++ {
 		for y := 0; y < s.cellsPerSection; y++ {
-			sectionCorrect = sectionCorrect && s.cells.correct(Point{p.X + x, p.Y + y})
+			sectionCorrect = sectionCorrect && s.cells.correct(Point{p.X*s.cellsPerSection + x, p.Y*s.cellsPerSection + y})
 		}
 	}
 	return sectionCorrect
@@ -137,15 +142,15 @@ func (s *State) clearValidCompletedSections() []bool {
 	cleared := make([]bool, s.sections.size*s.sections.size)
 	for x := 0; x < s.sectionSize; x++ {
 		for y := 0; y < s.sectionSize; y++ {
-			clearable := s.sections.complete(Point{x, y})
-			s.sections.complete(Point{x + 1%s.sectionSize, y})
-			s.sections.complete(Point{x, y + 1%s.sectionSize})
-			s.sections.complete(Point{x + 1%s.sectionSize, y + 1%s.sectionSize})
+			clearable := s.sections.complete(Point{x, y}) &&
+				s.sections.complete(Point{(x + 1) % s.sectionSize, y}) &&
+				s.sections.complete(Point{x, (y + 1) % s.sectionSize}) &&
+				s.sections.complete(Point{(x + 1) % s.sectionSize, (y + 1) % s.sectionSize})
 			if clearable {
 				cleared[y*s.sectionSize+x] = true
-				cleared[y*s.sectionSize+(x+1%s.sectionSize)] = true
-				cleared[(y*s.sectionSize+s.sectionSize%len(cleared))+x] = true
-				cleared[(y*s.sectionSize+s.sectionSize%len(cleared))+(x+1%s.sectionSize)] = true
+				cleared[(y*s.sectionSize + (x+1)%s.sectionSize)] = true
+				cleared[((y*s.sectionSize+s.sectionSize)%(len(cleared)) + x)] = true
+				cleared[((y*s.sectionSize+s.sectionSize)+(x+1%s.sectionSize))%len(cleared)] = true
 			}
 		}
 	}

@@ -44,7 +44,7 @@ func TestField(t *testing.T) {
 			So(f.marked(p), ShouldBeTrue)
 			f.flag(p)
 			So(f.flagged(p), ShouldBeTrue)
-			f.clear(p)
+			f.clear(p, false)
 			So(f.correct(p), ShouldBeFalse)
 			So(f.complete(p), ShouldBeFalse)
 			So(f.marked(p), ShouldBeFalse)

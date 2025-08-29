@@ -51,10 +51,10 @@ func (c cell) vivify() cell {
 // kill sets the state of the cell to dead.
 func (c cell) kill() cell {
 	c = c &^ statebit
-	if c.flagged() {
-		return c.setCorrect(true)
-	} else {
+	if c.marked() {
 		return c.setCorrect(false)
+	} else {
+		return c.setCorrect(true)
 	}
 }
 
@@ -99,6 +99,13 @@ func (c cell) flag() cell {
 }
 
 // clear clears all bits except for the status.
-func (c cell) clear() cell {
-	return c &^ (markbit | flagbit | correctbit | completebit)
+func (c cell) clear(deadCorrect bool) cell {
+	// Unset all bits except status
+	c = c &^ (markbit | flagbit | correctbit | completebit)
+
+	// If a dead cell is to be marked correct so long as it is *not* marked, set the correct bit
+	if deadCorrect && !c.state() {
+		c |= correctbit
+	}
+	return c
 }
