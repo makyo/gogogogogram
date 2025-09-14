@@ -11,7 +11,7 @@ type Point struct {
 }
 
 func (p Point) String() string {
-	return fmt.Sprintf("(%d,%d)", p.X, p.Y)
+	return fmt.Sprintf("%d,%d", p.X, p.Y)
 }
 
 type State struct {
@@ -34,7 +34,7 @@ func New(sectionSize, cellsPerSection int) *State {
 		sections:        newField(sectionSize),
 		cursor:          &Point{0, 0},
 	}
-	s.history = fmt.Sprintf("gogogogogram %d %d:\n", sectionSize, cellsPerSection)
+	s.history = fmt.Sprintf("g%d,%d", sectionSize, cellsPerSection)
 	for x := 0; x < sectionSize; x++ {
 		for y := 0; y < sectionSize; y++ {
 			s.initSection(Point{x, y})
@@ -113,10 +113,11 @@ func (s *State) initSection(p Point) {
 			s.cells.clear(currPoint, true)
 			if rand.Int()%2 == 0 {
 				s.cells.kill(currPoint)
+				s.history += "x"
 			} else {
 				s.cells.vivify(currPoint)
+				s.history += "o"
 			}
-			s.history += fmt.Sprintf("%c", byte(s.cells.cell(currPoint)))
 		}
 	}
 	s.update(p)

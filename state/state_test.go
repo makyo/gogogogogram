@@ -62,7 +62,7 @@ func TestState(t *testing.T) {
 			s.CursorCellDown()
 			s.CursorCellUp()
 
-			matches, err := regexp.Match("gogogogogram 2 2:\n(i\\(\\d,\\d\\)[\b\x01]{4}){4}fmcRLDUrldu", []byte(s.History()))
+			matches, err := regexp.Match(`g2,2(i\d,\d[xo]{4}){4}fmcRLDUrldu`, []byte(s.History()))
 			So(matches, ShouldBeTrue)
 			So(err, ShouldBeNil)
 		})
