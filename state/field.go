@@ -38,6 +38,11 @@ func (f *field) String() string {
 	return string(f.cells)
 }
 
+// cell returns the raw cell (a byte) at the given point.
+func (f *field) cell(p Point) cell {
+	return f.cells[f.i(p)]
+}
+
 // state returns whether or not the cell is alive.
 func (f *field) state(p Point) bool {
 	return f.cells[f.i(p)].state()

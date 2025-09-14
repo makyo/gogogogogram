@@ -2,6 +2,7 @@ package state
 
 import (
 	"bytes"
+	"fmt"
 	"math/rand"
 )
 
@@ -9,8 +10,17 @@ type Point struct {
 	X, Y int
 }
 
+func (p Point) String() string {
+	return fmt.Sprintf("(%d,%d)", p.X, p.Y)
+}
+
 type State struct {
 	cursor *Point
+
+	clears, score, factor int
+	blackout              []bool
+
+	history string
 
 	sectionSize, cellsPerSection int
 	cells, sections              *field
@@ -24,17 +34,24 @@ func New(sectionSize, cellsPerSection int) *State {
 		sections:        newField(sectionSize),
 		cursor:          &Point{0, 0},
 	}
+	s.history = fmt.Sprintf("gogogogogram %d %d:\n", sectionSize, cellsPerSection)
 	for x := 0; x < sectionSize; x++ {
 		for y := 0; y < sectionSize; y++ {
 			s.initSection(Point{x, y})
 		}
 	}
+	// TODO reveal 1 row per section, 1 col per sections/2
 	return s
 }
 
 // size is a utility method to keep cursor code clean.
 func (s *State) size() int {
 	return s.sectionSize * s.cellsPerSection
+}
+
+// History returns the gameplay history for replays
+func (s *State) History() string {
+	return s.history
 }
 
 func (s *State) String() string {
@@ -68,14 +85,17 @@ func (s *State) String() string {
 }
 
 func (s *State) Mark() []bool {
+	s.history += "m"
 	return s.mark(*s.cursor)
 }
 
 func (s *State) Flag() []bool {
+	s.history += "f"
 	return s.flag(*s.cursor)
 }
 
 func (s *State) Clear() {
+	s.history += "c"
 	s.clear(*s.cursor, true)
 }
 
@@ -83,17 +103,20 @@ func (s *State) view(cursor []int) {
 }
 
 func (s *State) initSection(p Point) {
+	s.history += fmt.Sprintf("i%s", p)
 	s.sections.clear(p, false)
 	startX := p.X * s.cellsPerSection
 	startY := p.Y * s.cellsPerSection
 	for x := 0; x < s.cellsPerSection; x++ {
 		for y := 0; y < s.cellsPerSection; y++ {
-			s.cells.clear(Point{x + startX, y + startY}, true)
+			currPoint := Point{x + startX, y + startY}
+			s.cells.clear(currPoint, true)
 			if rand.Int()%2 == 0 {
-				s.cells.kill(Point{x + startX, y + startY})
+				s.cells.kill(currPoint)
 			} else {
-				s.cells.vivify(Point{x + startX, y + startY})
+				s.cells.vivify(currPoint)
 			}
+			s.history += fmt.Sprintf("%c", byte(s.cells.cell(currPoint)))
 		}
 	}
 	s.update(p)
