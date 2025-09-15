@@ -10,10 +10,14 @@ type field struct {
 
 // newField returns a field of cells, all unset.
 func newField(size int) *field {
-	return &field{
+	f := &field{
 		cells: make([]cell, size*size),
 		size:  size,
 	}
+	for i := 0; i < size*size; i++ {
+		f.cells[i].clear(false)
+	}
+	return f
 }
 
 // fieldFromBytes returns a field of cells  given a bytearray; it assumes that the bytearray is a square.

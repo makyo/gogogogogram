@@ -11,7 +11,7 @@ type Point struct {
 }
 
 func (p Point) String() string {
-	return fmt.Sprintf("%d,%d", p.X, p.Y)
+	return fmt.Sprintf("(%d,%d)", p.X, p.Y)
 }
 
 type State struct {
@@ -20,7 +20,8 @@ type State struct {
 	clears, score, factor int
 	blackout              []bool
 
-	history string
+	history      string
+	historyIndex int
 
 	sectionSize, cellsPerSection int
 	cells, sections              *field
@@ -34,7 +35,7 @@ func New(sectionSize, cellsPerSection int) *State {
 		sections:        newField(sectionSize),
 		cursor:          &Point{0, 0},
 	}
-	s.history = fmt.Sprintf("g%d,%d", sectionSize, cellsPerSection)
+	s.history = fmt.Sprintf("g(%d,%d)", sectionSize, cellsPerSection)
 	for x := 0; x < sectionSize; x++ {
 		for y := 0; y < sectionSize; y++ {
 			s.initSection(Point{x, y})
@@ -47,11 +48,6 @@ func New(sectionSize, cellsPerSection int) *State {
 // size is a utility method to keep cursor code clean.
 func (s *State) size() int {
 	return s.sectionSize * s.cellsPerSection
-}
-
-// History returns the gameplay history for replays
-func (s *State) History() string {
-	return s.history
 }
 
 func (s *State) String() string {

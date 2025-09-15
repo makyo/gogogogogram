@@ -1,7 +1,6 @@
 package state
 
 import (
-	"regexp"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -47,24 +46,6 @@ func TestState(t *testing.T) {
 				s.Clear()
 				So(s.String(), ShouldEqual, ".o  \n.   \n    \n    \n")
 			})
-		})
-
-		Convey("You can maintain a history of all actions", func() {
-			s.Flag()
-			s.Mark()
-			s.Clear()
-			s.CursorSectionRight()
-			s.CursorSectionLeft()
-			s.CursorSectionDown()
-			s.CursorSectionUp()
-			s.CursorCellRight()
-			s.CursorCellLeft()
-			s.CursorCellDown()
-			s.CursorCellUp()
-
-			matches, err := regexp.Match(`g2,2(i\d,\d[xo]{4}){4}fmcRLDUrldu`, []byte(s.History()))
-			So(matches, ShouldBeTrue)
-			So(err, ShouldBeNil)
 		})
 
 		Convey("You can complete sections and clear portions of the board", func() {
