@@ -14,17 +14,28 @@ func (p Point) String() string {
 	return fmt.Sprintf("(%d,%d)", p.X, p.Y)
 }
 
+type score struct {
+	Clears, Score, Factor int
+	Blackout              []bool
+}
+
+type header struct {
+	alive    []int
+	complete bool
+}
+
 type State struct {
 	cursor *Point
 
-	clears, score, factor int
-	blackout              []bool
+	score score
 
 	history      string
 	historyIndex int
 
 	sectionSize, cellsPerSection int
 	cells, sections              *field
+
+	rowHeaders, colHeaders []header
 }
 
 func New(sectionSize, cellsPerSection int) *State {
@@ -50,6 +61,7 @@ func (s *State) size() int {
 	return s.sectionSize * s.cellsPerSection
 }
 
+// String is a utility method for providing a simpler string representation in tests.
 func (s *State) String() string {
 	var buf bytes.Buffer
 	for x := 0; x < s.sectionSize*s.cellsPerSection; x++ {
@@ -80,14 +92,18 @@ func (s *State) String() string {
 	return buf.String()
 }
 
-func (s *State) Mark() []bool {
-	s.history += "m"
-	return s.mark(*s.cursor)
+func (s *State) Score() score {
+	return s.score
 }
 
-func (s *State) Flag() []bool {
+func (s *State) Mark() {
+	s.history += "m"
+	s.mark(*s.cursor)
+}
+
+func (s *State) Flag() {
 	s.history += "f"
-	return s.flag(*s.cursor)
+	s.flag(*s.cursor)
 }
 
 func (s *State) Clear() {
@@ -119,14 +135,14 @@ func (s *State) initSection(p Point) {
 	s.update(p)
 }
 
-func (s *State) mark(p Point) []bool {
+func (s *State) mark(p Point) {
 	s.cells.mark(p)
-	return s.update(p)
+	s.update(p)
 }
 
-func (s *State) flag(p Point) []bool {
+func (s *State) flag(p Point) {
 	s.cells.flag(p)
-	return s.update(p)
+	s.update(p)
 }
 
 func (s *State) clear(p Point, deadCorrect bool) {
@@ -158,7 +174,7 @@ func (s *State) updateCompletedSections() {
 	}
 }
 
-func (s *State) clearValidCompletedSections() []bool {
+func (s *State) scoreValidCompletedSections() {
 	cleared := make([]bool, s.sections.size*s.sections.size)
 	for x := 0; x < s.sectionSize; x++ {
 		for y := 0; y < s.sectionSize; y++ {
@@ -174,26 +190,90 @@ func (s *State) clearValidCompletedSections() []bool {
 			}
 		}
 	}
+
+	// Increase scores
+	blackout := true
 	for i, v := range cleared {
 		if v {
 			s.initSection(Point{i % s.sectionSize, i / s.sectionSize})
+			s.score.Clears++
+			s.score.Score += s.score.Factor + 1
+			s.score.Blackout[i] = true
 		}
+		blackout = blackout && s.score.Blackout[i]
 	}
-	return cleared
+
+	// If all sections have been cleared at least once, increase the factor, clear the tracker, and start over with tracking.
+	if blackout {
+		s.score.Blackout = make([]bool, s.sections.size*s.sections.size)
+		s.score.Factor++
+	}
 }
 
-func (s *State) update(p Point) []bool {
+// updateAllHeaders runs updateHeaders for every row/column.
+func (s *State) updateAllHeaders() {
+	for i := 0; i < s.size(); i++ {
+		s.updateHeaders(Point{i, i})
+	}
+}
+
+// updateHeaders makes sure that the counts of alive cells in rows/columns are accurate, and whether or not the row/column is complete.
+func (s *State) updateHeaders(p Point) {
+	var rowHeader, colHeader header
+	var rowCounter, colCounter int
+	rowHeader.complete = true
+	colHeader.complete = true
+
+	// Loop through each row/column that contains this point
+	for i := 0; i < s.size(); i++ {
+		rowHeader.complete = rowHeader.complete && s.cells.complete(Point{i, p.Y})
+		if s.cells.state(Point{i, p.Y}) {
+			rowCounter++
+		} else {
+			if rowCounter > 0 {
+				rowHeader.alive = append(rowHeader.alive, rowCounter)
+			}
+			rowCounter = 0
+		}
+
+		colHeader.complete = colHeader.complete && s.cells.complete(Point{p.X, i})
+		if s.cells.state(Point{p.X, i}) {
+			colCounter++
+		} else {
+			if colCounter > 0 {
+				colHeader.alive = append(colHeader.alive, colCounter)
+			}
+			colCounter = 0
+		}
+	}
+
+	// In case there are any living cells at the end of the row/column
+	if rowCounter > 0 {
+		rowHeader.alive = append(rowHeader.alive, rowCounter)
+	}
+	if colCounter > 0 {
+		colHeader.alive = append(colHeader.alive, colCounter)
+	}
+
+	s.rowHeaders[p.Y] = rowHeader
+	s.colHeaders[p.X] = colHeader
+}
+
+func (s *State) update(p Point) {
 	sectionPoint := Point{p.X / s.cellsPerSection, p.Y / s.cellsPerSection}
 
 	if s.cells.correct(p) && s.sectionCorrect(sectionPoint) {
 		s.sections.setCorrect(sectionPoint, true)
 		s.updateCompletedSections()
-		return s.clearValidCompletedSections()
+		s.scoreValidCompletedSections()
+		return
 	}
+
 	s.sections.setCorrect(sectionPoint, false)
 	for i := 0; i < s.sectionSize; i++ {
 		s.sections.setComplete(Point{sectionPoint.X, i}, false)
 		s.sections.setComplete(Point{i, sectionPoint.Y}, false)
 	}
-	return make([]bool, s.sections.size*s.sections.size)
+
+	s.updateHeaders(p)
 }

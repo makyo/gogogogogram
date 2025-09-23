@@ -11,8 +11,6 @@ type model struct {
 
 	columnStates, rowStates     [][]int
 	columnsCorrect, rowsCorrect []bool
-
-	history string
 }
 
 func newModel(sectionSize, cellsPerSection int) model {

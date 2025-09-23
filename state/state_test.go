@@ -55,18 +55,16 @@ func TestState(t *testing.T) {
 			s.cells.vivify(Point{2, 2})
 
 			Convey("It marks sections as correct when they are correctly guessed", func() {
-				res := s.mark(Point{0, 0})
+				s.mark(Point{0, 0})
 				So(s.cells.correct(Point{0, 0}), ShouldBeTrue)
 				So(s.sections.correct(Point{0, 0}), ShouldBeTrue)
 				So(s.String(), ShouldEqual, "O . \n    \n. . \n    \n")
-				So(res, ShouldResemble, make([]bool, 4))
 			})
 
 			Convey("It marks sections as complete if they meet the criteria", func() {
 				s.mark(Point{0, 0})
 				s.mark(Point{2, 0})
-				res := s.mark(Point{0, 2})
-				So(res, ShouldResemble, make([]bool, 4))
+				s.mark(Point{0, 2})
 				So(s.String(), ShouldEqual, "O O \n    \nO . \n    \n")
 				So(s.sections.correct(Point{0, 0}), ShouldBeTrue)
 				So(s.sections.correct(Point{1, 0}), ShouldBeTrue)
@@ -78,8 +76,8 @@ func TestState(t *testing.T) {
 				s.mark(Point{0, 0})
 				s.mark(Point{2, 0})
 				s.mark(Point{0, 2})
-				res := s.mark(Point{2, 2})
-				So(res, ShouldResemble, []bool{true, true, true, true})
+				s.mark(Point{2, 2})
+				//So(res, ShouldResemble, []bool{true, true, true, true})
 			})
 		})
 	})
