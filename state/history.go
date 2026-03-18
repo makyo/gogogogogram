@@ -127,13 +127,7 @@ func (s *State) historyPoint(index int) (Point, int) {
 		break
 	}
 
-	pX, err := strconv.Atoi(x)
-	if err != nil {
-		panic(err)
-	}
-	pY, err := strconv.Atoi(y)
-	if err != nil {
-		panic(err)
-	}
+	pX, _ := strconv.Atoi(x)
+	pY, _ := strconv.Atoi(y)
 	return Point{pX, pY}, index
 }

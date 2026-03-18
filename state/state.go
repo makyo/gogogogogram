@@ -114,9 +114,6 @@ func (s *State) Clear() {
 	s.clear(*s.cursor, true)
 }
 
-func (s *State) view(cursor []int) {
-}
-
 func (s *State) initSection(p Point) {
 	s.history += fmt.Sprintf("i%s", p)
 	s.sections.clear(p, false)
@@ -210,13 +207,6 @@ func (s *State) scoreValidCompletedSections() {
 	if blackout {
 		s.score.Blackout = make([]bool, s.sections.size*s.sections.size)
 		s.score.Factor++
-	}
-}
-
-// updateAllHeaders runs updateHeaders for every row/column.
-func (s *State) updateAllHeaders() {
-	for i := 0; i < s.size(); i++ {
-		s.updateHeaders(Point{i, i})
 	}
 }
 

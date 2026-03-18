@@ -48,6 +48,13 @@ func TestState(t *testing.T) {
 			})
 		})
 
+		Convey("You can get the score", func() {
+			score := s.Score()
+			So(score.Clears, ShouldEqual, 0)
+			So(score.Score, ShouldEqual, 0)
+			So(score.Blackout, ShouldResemble, []bool{false, false, false, false})
+		})
+
 		Convey("You can complete sections and clear portions of the board", func() {
 			s.cells.vivify(Point{0, 0})
 			s.cells.vivify(Point{2, 0})

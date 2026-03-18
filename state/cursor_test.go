@@ -82,12 +82,12 @@ func TestCursor(t *testing.T) {
 			})
 
 			Convey("You can't move up beyond the top", func() {
-				s.CursorCellUp()
+				s.CursorSectionUp()
 				So(*s.cursor, ShouldResemble, Point{0, 0})
 			})
 
 			Convey("You can't move left beyond the edge", func() {
-				s.CursorCellLeft()
+				s.CursorSectionLeft()
 				So(*s.cursor, ShouldResemble, Point{0, 0})
 			})
 

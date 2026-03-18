@@ -23,6 +23,10 @@ func TestField(t *testing.T) {
 			So(f.i(Point{1, 1}), ShouldEqual, 3)
 		})
 
+		Convey("You can get the byte for a particular cell", func() {
+			So(f.cell(Point{0, 0}), ShouldEqual, cell(0))
+		})
+
 		Convey("You can get a string representation of the field", func() {
 			So(f.String(), ShouldEqual, "\x00\x00\x00\x00")
 		})
