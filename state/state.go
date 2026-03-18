@@ -45,7 +45,10 @@ func New(sectionSize, cellsPerSection int) *State {
 		cells:           newField(sectionSize * cellsPerSection),
 		sections:        newField(sectionSize),
 		cursor:          &Point{0, 0},
+		rowHeaders:      make([]header, sectionSize*cellsPerSection),
+		colHeaders:      make([]header, sectionSize*cellsPerSection),
 	}
+	s.score.Blackout = make([]bool, sectionSize*cellsPerSection)
 	s.history = fmt.Sprintf("g(%d,%d)", sectionSize, cellsPerSection)
 	for x := 0; x < sectionSize; x++ {
 		for y := 0; y < sectionSize; y++ {

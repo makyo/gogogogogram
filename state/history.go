@@ -68,10 +68,13 @@ func (s *State) historyStart() {
 	p, peek := s.historyPoint(peek)
 	s.sectionSize = p.X
 	s.cellsPerSection = p.Y
-	s.cells = newField(s.sectionSize * s.cellsPerSection)
+	s.cells = newField(s.size())
 	s.sections = newField(s.sectionSize)
 	s.cursor = &Point{0, 0}
+	s.rowHeaders = make([]header, s.size())
+	s.colHeaders = make([]header, s.size())
 	s.historyIndex = peek
+	s.score.Blackout = make([]bool, s.size())
 }
 
 func (s *State) historyInitSection() {
