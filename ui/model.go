@@ -25,7 +25,7 @@ func NewModel(sectionSize, cellsPerSection int) model {
 		fieldSize:       sectionSize * cellsPerSection,
 		sectionSize:     sectionSize,
 		cellsPerSection: cellsPerSection,
-		state:           state.New(sectionSize, cellsPerSection),
+		state:           state.New(sectionSize, cellsPerSection, true),
 	}
 
 	return m

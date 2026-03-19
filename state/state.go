@@ -41,7 +41,7 @@ type State struct {
 	rowHeaders, colHeaders []header
 }
 
-func New(sectionSize, cellsPerSection int) *State {
+func New(sectionSize, cellsPerSection int, reveal bool) *State {
 	s := &State{
 		sectionSize:     sectionSize,
 		cellsPerSection: cellsPerSection,
@@ -58,7 +58,33 @@ func New(sectionSize, cellsPerSection int) *State {
 			s.initSection(Point{x, y})
 		}
 	}
-	// TODO reveal 1 row per section, 1 col per sections/2
+	if reveal {
+		for i := 0; i < s.sectionSize; i++ {
+			reveal := i*s.cellsPerSection + rand.Intn(s.cellsPerSection)
+			s.history += fmt.Sprintf("ry(%d)", reveal)
+			for x := 0; x < s.size(); x++ {
+				p := Point{x, reveal}
+				if s.cells.state(p) {
+					s.mark(p)
+				} else {
+					s.flag(p)
+				}
+			}
+
+			if rand.Int()%2 == 0 {
+				reveal = i*s.cellsPerSection + rand.Intn(s.cellsPerSection)
+				s.history += fmt.Sprintf("rx(%d)", reveal)
+				for y := 0; y < s.size(); y++ {
+					p := Point{reveal, y}
+					if s.cells.state(p) {
+						s.mark(p)
+					} else {
+						s.flag(p)
+					}
+				}
+			}
+		}
+	}
 	s.initialized = true
 	return s
 }
