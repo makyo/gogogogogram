@@ -1,4 +1,4 @@
-package main
+package ui
 
 import tea "github.com/charmbracelet/bubbletea"
 
@@ -17,6 +17,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 
+		// Saving
+		case "ctrl+s":
+			return m, nil
+
 		// Movement by cell
 		case "up", "w":
 			m.state.CursorCellUp()
@@ -31,17 +35,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.state.CursorCellLeft()
 
 		// Movement by section
-		case "ctrl+up", "ctrl+w", "shift+up", "shift+w":
+		case "shift+up", "W":
 			m.state.CursorSectionUp()
 
-		case "ctrl+down", "ctrl+s", "shift+down", "shift+s":
+		case "shift+down", "S":
 			m.state.CursorSectionDown()
 
-		case "ctrl+right", "ctrl+d", "shift+right", "shift+d":
+		case "shift+right", "D":
 			m.state.CursorSectionRight()
 
-		case "ctrl+left", "ctrl+a", "shift+left", "shift+a":
-			m.state.CursorSectionRight()
+		case "shift+left", "A":
+			m.state.CursorSectionLeft()
 
 		// Marking/flagging
 		case " ", "enter":
@@ -52,6 +56,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "delete", "backspace":
 			m.state.Clear()
+
 		}
 	}
 
@@ -59,5 +64,5 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	return ""
+	return m.state.View()
 }

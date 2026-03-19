@@ -1,11 +1,18 @@
-package main
+package ui
 
-import "git.makyo.dev/makyo/gogogogogram/state"
+import (
+	"os"
+
+	"git.makyo.dev/makyo/gogogogogram/state"
+)
 
 type model struct {
 	fieldSize, sectionSize, cellsPerSection int
 
 	state *state.State
+
+	filename string
+	file     *os.File
 
 	clears, score, factor, track int
 
@@ -13,7 +20,7 @@ type model struct {
 	columnsCorrect, rowsCorrect []bool
 }
 
-func newModel(sectionSize, cellsPerSection int) model {
+func NewModel(sectionSize, cellsPerSection int) model {
 	m := model{
 		fieldSize:       sectionSize * cellsPerSection,
 		sectionSize:     sectionSize,

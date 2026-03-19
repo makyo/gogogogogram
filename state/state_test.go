@@ -1,7 +1,9 @@
 package state
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -62,10 +64,13 @@ func TestState(t *testing.T) {
 			s.cells.vivify(Point{2, 2})
 
 			Convey("It marks sections as correct when they are correctly guessed", func() {
-				s.mark(Point{0, 0})
+				s.Mark()
 				So(s.cells.correct(Point{0, 0}), ShouldBeTrue)
 				So(s.sections.correct(Point{0, 0}), ShouldBeTrue)
 				So(s.String(), ShouldEqual, "O . \n    \n. . \n    \n")
+				Convey("It adds a timestamp to the history when a section is completed", func() {
+					So(s.history, ShouldEndWith, fmt.Sprintf("mt(%d)", time.Now().Unix()))
+				})
 			})
 
 			Convey("It marks sections as complete if they meet the criteria", func() {
@@ -84,7 +89,6 @@ func TestState(t *testing.T) {
 				s.mark(Point{2, 0})
 				s.mark(Point{0, 2})
 				s.mark(Point{2, 2})
-				//So(res, ShouldResemble, []bool{true, true, true, true})
 			})
 		})
 	})

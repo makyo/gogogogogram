@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 type Point struct {
@@ -25,6 +26,8 @@ type header struct {
 }
 
 type State struct {
+	initialized bool
+
 	cursor *Point
 
 	score score
@@ -56,6 +59,7 @@ func New(sectionSize, cellsPerSection int) *State {
 		}
 	}
 	// TODO reveal 1 row per section, 1 col per sections/2
+	s.initialized = true
 	return s
 }
 
@@ -259,6 +263,7 @@ func (s *State) update(p Point) {
 		s.sections.setCorrect(sectionPoint, true)
 		s.updateCompletedSections()
 		s.scoreValidCompletedSections()
+		s.history += fmt.Sprintf("t(%d)", time.Now().Unix())
 		return
 	}
 
