@@ -10,7 +10,7 @@ import (
 
 func TestState(t *testing.T) {
 	Convey("Given a game state", t, func() {
-		s := New(2, 2)
+		s := New(2, 2, false)
 		for x := 0; x < 4; x++ {
 			for y := 0; y < 4; y++ {
 				s.cells.kill(Point{x, y})

@@ -8,7 +8,7 @@ import (
 
 func TestCursor(t *testing.T) {
 	Convey("Given a cursor", t, func() {
-		s := New(4, 4)
+		s := New(4, 4, false)
 		So(*s.cursor, ShouldResemble, Point{0, 0})
 
 		Convey("When moving cell to cell", func() {

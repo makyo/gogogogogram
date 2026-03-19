@@ -12,7 +12,7 @@ func TestHistory(t *testing.T) {
 	Convey("Given a game's history", t, func() {
 
 		Convey("You can maintain a history of all actions", func() {
-			s := New(2, 2)
+			s := New(2, 2, false)
 			s.Flag()
 			s.Mark()
 			s.Clear()
